@@ -20,6 +20,10 @@ RUN apt-get update \
     && usermod -aG sudo github \
     && echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+# setup docker runner
+RUN curl -sSL https://get.docker.com/ | sh
+RUN usermod -aG docker github
+
 USER github
 WORKDIR /home/github
 
