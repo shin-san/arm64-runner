@@ -27,7 +27,8 @@ RUN useradd -m github && \
 
 #setup docker runner 
 RUN curl -sSL https://get.docker.com/ | sh
-RUN usermod -aG docker github 
+RUN sudo usermod -aG docker github
+RUN export DOCKER_HOST=unix:///run/user/$USER_ID/docker.sock >>/home/$USER_NAME/.profile 
 
 USER github
 WORKDIR /home/github
