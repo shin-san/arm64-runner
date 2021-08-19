@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-runner
+  namespace: github-runner
+  labels:
+    app: github-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-runner
+  template:
+    metadata:
+      labels:
+        app: github-runner
+    spec:
+      containers:
+      - name: github-runner
+        image: localhost:5000/github-runner:latest
+        env:
+        - name: GITHUB_OWNER
+          value: JC
+        - name: GITHUB_REPOSITORY
+          value: hello-world
+        - name: GITHUB_PERSONAL_ACCESS_TOKEN # stored separately in a Kubernetes Secret
+          valueFrom:
+            secretKeyRef:
+              name: github-secret
+              key: access_token

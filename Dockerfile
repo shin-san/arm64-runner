@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM debian:buster-slim
 
 ARG GITHUB_RUNNER_VERSION="2.280.2"
 
