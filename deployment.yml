@@ -20,7 +20,7 @@ spec:
         image: localhost:5000/github-runner:latest
         env:
         - name: GITHUB_OWNER
-          value: JC
+          value: shin-san
         - name: GITHUB_REPOSITORY
           value: hello-world
         - name: GITHUB_PERSONAL_ACCESS_TOKEN # stored separately in a Kubernetes Secret
