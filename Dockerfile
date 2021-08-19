@@ -14,15 +14,20 @@ RUN apt-get update \
         sudo \
         git \
         jq \
+        tar \
+        gnupg2 \
+        apt-transport-https \
+        ca-certificates  \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && useradd -m github \
-    && usermod -aG sudo github \
-    && echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    && rm -rf /var/lib/apt/lists/*
 
-# setup docker runner
+RUN useradd -m github && \
+    usermod -aG sudo github && \
+    echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+#setup docker runner 
 RUN curl -sSL https://get.docker.com/ | sh
-RUN usermod -aG docker github
+RUN usermod -aG docker github 
 
 USER github
 WORKDIR /home/github
