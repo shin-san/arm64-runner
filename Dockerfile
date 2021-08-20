@@ -1,6 +1,6 @@
 FROM debian:buster-slim
 
-ARG GITHUB_RUNNER_VERSION="2.280.2"
+ARG GITHUB_RUNNER_VERSION="2.280.3"
 
 ENV RUNNER_NAME "runner"
 ENV GITHUB_PERSONAL_ACCESS_TOKEN ""
@@ -28,7 +28,6 @@ RUN useradd -m github && \
 #setup docker runner 
 RUN curl -sSL https://get.docker.com/ | sh
 RUN sudo usermod -aG docker github
-RUN export DOCKER_HOST=unix:///run/user/$USER_ID/docker.sock >>/home/$USER_NAME/.profile 
 
 USER github
 WORKDIR /home/github
