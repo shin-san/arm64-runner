@@ -27,7 +27,7 @@ RUN useradd -m github && \
 
 #setup docker runner 
 RUN curl -sSL https://get.docker.com/ | sh
-RUN sudo usermod -aG docker github
+RUN groupadd docker && usermod -aG docker github
 
 USER github
 WORKDIR /home/github
