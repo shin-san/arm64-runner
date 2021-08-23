@@ -21,21 +21,13 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m github && \
-    usermod -aG sudo github && \
-    echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
 #setup docker runner 
 RUN curl -sSL https://get.docker.com/ | sh
-RUN groupadd docker && usermod -aG docker github
-
-USER github
-WORKDIR /home/github
 
 RUN curl -Ls https://github.com/actions/runner/releases/download/v${GITHUB_RUNNER_VERSION}/actions-runner-linux-arm64-${GITHUB_RUNNER_VERSION}.tar.gz | tar xz \
     && sudo ./bin/installdependencies.sh
 
-COPY --chown=github:github entrypoint.sh ./entrypoint.sh
-RUN sudo chmod u+x ./entrypoint.sh
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod u+x ./entrypoint.sh
 
-ENTRYPOINT ["/home/github/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]

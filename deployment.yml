@@ -18,6 +18,9 @@ spec:
       containers:
       - name: github-runner
         image: localhost:5000/github-runner:latest
+        volumeMounts:
+        - name: dockersock
+          mountPath: "/var/run/docker.sock"
         env:
         - name: GITHUB_OWNER
           value: shin-san
@@ -28,3 +31,7 @@ spec:
             secretKeyRef:
               name: github-secret
               key: access_token
+      volumes:
+        - name: dockersock
+          hostPath:
+            path: /var/run/docker.sock

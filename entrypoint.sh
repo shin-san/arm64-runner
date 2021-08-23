@@ -1,4 +1,6 @@
 #!/bin/sh
+export RUNNER_ALLOW_RUNASROOT=1
+
 registration_url="https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPOSITORY}/actions/runners/registration-token"
 echo "Requesting registration URL at '${registration_url}'"
 

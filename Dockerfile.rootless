@@ -1,0 +1,61 @@
+FROM debian:buster-slim
+
+ARG GITHUB_RUNNER_VERSION="2.280.3"
+
+ENV RUNNER_NAME "runner"
+ENV GITHUB_PERSONAL_ACCESS_TOKEN ""
+ENV GITHUB_OWNER ""
+ENV GITHUB_REPOSITORY ""
+ENV RUNNER_WORKDIR "_work"
+
+RUN apt-get update \
+    && apt-get install -y \
+        curl \
+        sudo \
+        git \
+        jq \
+        tar \
+        gnupg2 \
+        apt-transport-https \
+        ca-certificates  \
+        uidmap \
+        kmod \
+        iptables \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/bin
+# install slirp4netns
+RUN curl -o slirp4netns --fail -L https://github.com/rootless-containers/slirp4netns/releases/download/v1.1.12/slirp4netns-$(uname -m)
+RUN chmod +x slirp4netns
+
+# RUN # install rootlesskit
+# RUN curl -sSL https://github.com/rootless-containers/rootlesskit/releases/download/v0.14.5/rootlesskit-$(uname -m).tar.gz | tar Cxzv ./
+
+RUN useradd -m github && \
+    usermod -aG sudo github && \
+    echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+#setup docker runner 
+RUN curl -sSL https://get.docker.com/ | sh
+RUN usermod -aG docker github
+
+USER github
+WORKDIR /home/github
+
+# RUN ./dockerd-rootless.sh --experimental --storage-driver vfs
+RUN dockerd-rootless-setuptool.sh install
+
+RUN export XDG_RUNTIME_DIR=/home/github/.docker/run
+RUN export PATH=/home/github/bin:$PATH
+RUN export DOCKER_HOST=unix:///home/github/.docker/run/docker.sock
+
+RUN dockerd-rootless.sh
+
+RUN curl -Ls https://github.com/actions/runner/releases/download/v${GITHUB_RUNNER_VERSION}/actions-runner-linux-arm64-${GITHUB_RUNNER_VERSION}.tar.gz | tar xz \
+    && sudo ./bin/installdependencies.sh
+
+COPY --chown=github:github entrypoint.sh ./entrypoint.sh
+RUN sudo chmod u+x ./entrypoint.sh
+
+ENTRYPOINT ["/home/github/entrypoint.sh"]
